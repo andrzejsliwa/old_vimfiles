@@ -61,7 +61,7 @@ filetype plugin indent on
 set term=screen-256color " configure 256 colors
 set t_Co=256             " same...
 set background=dark      " choose dark version of background
-colorscheme hemisu         " choose my favorite vim color scheme
+colorscheme hemisu       " choose my favorite vim color scheme
 " }}} Look & feel
 
 " General {{{
@@ -209,6 +209,8 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 " }}} Auto commands
 
 " Bindings {{{
+" switch relative/normal numbering
+nno <leader>n :LineNumberToggle<cr>
 " search via ack
 nno <leader>a :Ack<space>
 " search current word
