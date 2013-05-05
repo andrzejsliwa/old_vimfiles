@@ -1,11 +1,12 @@
 " Must have {{{
-let vim_server_path=expand("~/.vim-andrzej")
-let vim_path=expand("~/.vim")
+" prepare path for check
+let g:vim_server_path=expand("~/.vim-andrzej")
+" prepare base path for rest of configs
 if isdirectory(vim_server_path)
-  let $CONFIG_ROOT=vim_server_path
-  let $MYVIMRC=vim_server_path . "/vimrc"
+  let $CONFIG_ROOT=g:vim_server_path
+  let $MYVIMRC=g:vim_server_path . "/vimrc"
 else
-  let $CONFIG_ROOT=vim_path
+  let $CONFIG_ROOT=expand("~/.vim")
 endif
 
 command! -bar -nargs=* Rc e $MYVIMRC       " edit ~/.vimrc   (this file)
