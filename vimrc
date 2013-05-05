@@ -155,6 +155,11 @@ set incsearch
 set hlsearch
 " }}} Search
 
+" Folding {{{
+" don't fold by default
+set nofoldenable
+" }}}
+
 " Plugins configs {{{
 
 " Ack {{{
@@ -171,6 +176,10 @@ let g:ctrlp_reuse_window = 1
 " Power line {{{
 let g:Powerline_symbols = 'fancy'
 " }}} Power line
+
+" snipmate {{{
+let snippets_dir = $CONFIG_ROOT . "/snippets"
+" }}}
 
 " Ignores {{{
 set wildmenu
@@ -221,13 +230,13 @@ endfunction
 
 " open cheat sheet {{{
 function! CheatSheet()
-  sp | e ~/.vim/cheatsheet
+  sp | e $CONFIG_ROOT/cheatsheet
 endfunction
 " }}} open cheat sheet
 
 " Edit snippet {{{
 function! EditMySnippets()
-  execute "sp | e ~/.vim/snippets/" . &ft . ".snippets"
+  execute "sp | e " . $CONFIG_ROOT . "/snippets/" . &ft . ".snippets"
 endfunction
 
 function! ReloadMySnippets()
@@ -255,9 +264,9 @@ augroup FileTypes
   autocmd FileType snippet setlocal shiftwidth=4 tabstop=4
   autocmd FileType erlang  setlocal shiftwidth=4 tabstop=4
   autocmd FileType make    setlocal noexpandtab shiftwidth=4 tabstop=4
-
+  autocmd FileType snippet setlocal expandtab shiftwidth=4 tabstop=4
   autocmd BufNewFile,BufRead *.app.src set filetype=erlang
-  autocmd  BufNewFile,BufRead *.config  set filetype=erlang
+  autocmd BufNewFile,BufRead *.config  set filetype=erlang
 augroup END
 
 augroup Other
@@ -318,8 +327,7 @@ nno <leader>rc :Rc<cr>
 nno <leader>rl :Rl<cr>
 " show cheat sheet
 nno <leader>c :Cheat<cr>
-" indent right & left single line
-nno > >>
+no > >>
 nno < <<
 nmap < <<
 nmap > >>
