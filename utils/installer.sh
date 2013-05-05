@@ -5,7 +5,6 @@ then
     cd ~/.vim ; git pull
 else
     git clone https://github.com/andrzejsliwa/vimfiles.git ~/.vim; ln -s $HOME/.vim/vimrc $HOME/.vimrc
-    git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 fi
 ln -s $HOME/.vim/vimrc $HOME/.vimrc
 ln -s $HOME/.vim/tmux.conf $HOME/.tmux.conf
