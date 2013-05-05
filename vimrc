@@ -276,7 +276,11 @@ augroup END
 " }}} Auto commands
 
 " Bindings {{{
-" switch relative/normal numbering
+" enable paste
+nno <leader>q :set paste<cr>
+" diable paste
+nno <leader>Q :set nopaste<cr>
+" switch relative/normal nuqmbering
 nno <leader>n :LineNumberToggle<cr>
 " search via ack
 nno <leader>a :Ack<space>
@@ -293,7 +297,7 @@ nno <leader>b :CtrlPBuffer<cr>
 " split vertical
 nno <leader>v <C-W>v
 " split horizontal
-nno <leader>h <C-W>s
+nno <leader>s <C-W>s
 " switch to previous buffer
 nno <leader><leader> <c-^>
 " close current pane
@@ -327,12 +331,23 @@ nno <leader>rc :Rc<cr>
 nno <leader>rl :Rl<cr>
 " show cheat sheet
 nno <leader>c :Cheat<cr>
-no > >>
+" move left
 nno < <<
 nmap < <<
+" move right
+nno > >>
 nmap > >>
-" indent right/left selection with repeat selecting
+" move left selection with repeat selecting
 vmap < <gv
+" move right selection with repeat selecting
 vmap > >gv
+" resize window left
+nno <leader>h :vertical resize -5<cr>
+" resize window right
+nno <leader>l :vertical resize +5<cr>
+" resize window down
+nno <leader>j :resize +5<cr>
+" resize window up
+nno <leader>k :resize -5<cr>
 " }}} Bindings
 
