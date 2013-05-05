@@ -164,7 +164,7 @@ let g:ackprg = 'ag --nogroup --nocolor --column'
 
 " CtrlP {{{
 let g:ctrlp_cmd = 'CtrlPBuffer'
-let g:ctrlp_cache_dir = $HOME.'/.vim/tmp/.cache/ctrlp'
+let g:ctrlp_cache_dir = $CONFIG_ROOT . '/tmp/.cache/ctrlp'
 let g:ctrlp_reuse_window = 1
 " }}} CtrlP
 
