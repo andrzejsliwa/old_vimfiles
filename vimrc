@@ -35,7 +35,7 @@ endif
 
 " Configure vundle manager {{{
 set rtp+=$CONFIG_ROOT/bundle/vundle/
-call vundle#rc()
+call vundle#rc($CONFIG_ROOT . "/bundle")
 " basic help
 "   :BundleList          - list configured bundles
 "   :BundleInstall(!)    - install(update) bundles
