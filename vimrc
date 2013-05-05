@@ -180,9 +180,9 @@ function! s:OpenTodo(toFull)
     e ~/Dropbox/todo.taskpaper
   endif
 endfunction
-" }}}
+" }}} Todos
 
-" EditSnippet() {{{
+" Edit snippet {{{
 function! EditMySnippets()
   execute ":e ~/.vim/snippets/" . &ft . ".snippets"
 endfunction
@@ -192,7 +192,7 @@ function! ReloadMySnippets()
   execute "silent :bd"
   execute "silent :call ReloadAllSnippets()"
 endfunction
-" }}}
+" }}} Edit snippet
 
 " }}} Custom functions
 
