@@ -1,4 +1,12 @@
 " Must have {{{
+let vim_server_path=expand("~/.andrzej-vim")
+let vim_path=expand("~/.vim")
+if isdirectory(vim_server_path)
+  let $CONFIG_ROOT=vim_server_path
+else
+  let $CONFIG_ROOT=vim_path
+endif
+
 command! -bar -nargs=* Rc e $MYVIMRC       " edit ~/.vimrc   (this file)
 command! -bar -nargs=* Rl :source $MYVIMRC " reload ~/.vimrc (this file)
 set backspace=indent,eol,start             " enable intuitive backspacing
@@ -16,15 +24,15 @@ filetype off
 
 " Handle first runtime {{{
 let g:first_time=0
-if !isdirectory(expand("~/.vim/bundle/vundle"))
-  call mkdir(expand("~/.vim/bundle", "p"))
-  silent exec "!git clone git://github.com/gmarik/vundle.git ~/.vim/bundle/vundle"
+if !isdirectory($CONFIG_ROOT . "/bundle/vundle")
+  call mkdir($CONFIG_ROOT . "/bundle", "p")
+  silent exec "!git clone git://github.com/gmarik/vundle.git " . $CONFIG_ROOT . "/bundle/vundle"
   let g:first_time=1
 endif
 " }}} Handle first runtime
 
 " Configure vundle manager {{{
-set rtp+=~/.vim/bundle/vundle/
+set rtp+=$CONFIG_ROOT/bundle/vundle/
 call vundle#rc()
 " basic help
 "   :BundleList          - list configured bundles
@@ -34,16 +42,40 @@ call vundle#rc()
 " }}} Configure vundle manager
 
 " Bundles definitions {{{
+" plugins manager
 Bundle 'gmarik/vundle'
+" library of usefull functions and and viml development helpers
+Bundle 'vim-scripts/L9'
+" nice status line
 Bundle 'Lokaltog/vim-powerline'
+" fuzzy finder for files and buffers
 Bundle 'kien/ctrlp.vim'
+" search via ack
 Bundle 'mileszs/ack.vim'
+" easy commenting
 Bundle 'vim-scripts/tComment'
+" task paper - todos
 Bundle 'davidoc/taskpaper.vim'
+" snippets support in textmate syntax
 Bundle 'vlasar/snipmate'
+" changing in multiple places in same time
 Bundle 'terryma/vim-multiple-cursors'
+" undo tree
 Bundle 'sjl/gundo.vim'
+" project drawer
 Bundle 'scrooloose/nerdtree'
+" tmux integration
+Bundle 'benmills/vimux'
+" running tests via vimux and tmux
+Bundle 'jgdavey/vim-turbux'
+" native clipboard
+Bundle 'troydm/pb.vim'
+" git integration
+Bundle 'tpope/vim-fugitive'
+" rebar integration
+Bundle 'mbbx6spp/vim-rebar'
+" erlang integration - customised indentation
+Bundle 'andrzejsliwa/vimerl'
 " }}} Bundles definitions
 
 " Triger install when firstime {{{
@@ -119,31 +151,6 @@ set incsearch
 set hlsearch
 " }}} Search
 
-" Strip trainling whitespaces {{{
-function! <SID>StripTrailingWhitespaces()
-  " Preparation: "ave last search, and cursor position.
-  let _s=@/
-  let l = line(".")
-  let c = col(".")
-  " Do the business:
-  %s/\s\+$//e
-  " Clean up:
-  " restore previous search history, and cursor position
-  let @/=_s
-  call cursor(l, c)
-endfunction
-" }}} Strip trainling whitespaces
-
-" Line number toggle {{{
-function! LineNumberToggle()
-  if(&relativenumber == 1)
-    set number
-  else
-    set relativenumber
-  endif
-endfunc
-" }}} Line number toggle
-
 " Plugins configs {{{
 
 " Ack {{{
@@ -172,6 +179,32 @@ set wildignore+=.git,ebin,*.o,*.DS_Store,*.beam
 " }}} Plugins configs
 
 " Custom functions {{{
+
+" Strip trainling whitespaces {{{
+function! <SID>StripTrailingWhitespaces()
+  " Preparation: "ave last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business:
+  %s/\s\+$//e
+  " Clean up:
+  " restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
+endfunction
+" }}} Strip trainling whitespaces
+
+" Line number toggle {{{
+function! LineNumberToggle()
+  if(&relativenumber == 1)
+    set number
+  else
+    set relativenumber
+  endif
+endfunc
+" }}} Line number toggle
+
 " Todos {{{
 function! s:OpenTodo(toFull)
   if (a:toFull == 1)
@@ -182,9 +215,15 @@ function! s:OpenTodo(toFull)
 endfunction
 " }}} Todos
 
+" open cheat sheet {{{
+function! CheatSheet()
+  sp | e ~/.vim/cheatsheet
+endfunction
+" }}} open cheat sheet
+
 " Edit snippet {{{
 function! EditMySnippets()
-  execute ":e ~/.vim/snippets/" . &ft . ".snippets"
+  execute "sp | e ~/.vim/snippets/" . &ft . ".snippets"
 endfunction
 
 function! ReloadMySnippets()
@@ -199,13 +238,28 @@ endfunction
 " Commands defs {{{
 command! -bar -nargs=* Todo call s:OpenTodo(1)
 command! -bar -nargs=* Todof call s:OpenTodo(2)
-command! -bar -nargs=* EditMySnippets call s:EditMySnippets()
-command! -bar -nargs=* ReloadMySnippets call s:ReloadMySnippets()
+command! -bar -nargs=* Cheat call CheatSheet()
+command! -bar -nargs=* EditMySnippets call EditMySnippets()
+command! -bar -nargs=* ReloadMySnippets call ReloadMySnippets()
 command! -bar -nargs=* LineNumberToggle call LineNumberToggle()
 " }}} Commands defs
 
 " Auto commands {{{
 autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
+augroup FileTypes
+  autocmd!
+  autocmd FileType snippet setlocal shiftwidth=4 tabstop=4
+  autocmd FileType erlang  setlocal shiftwidth=4 tabstop=4
+  autocmd FileType make    setlocal noexpandtab shiftwidth=4 tabstop=4
+
+  autocmd BufNewFile,BufRead *.app.src set filetype=erlang
+  autocmd  BufNewFile,BufRead *.config  set filetype=erlang
+augroup END
+
+augroup Other
+  autocmd!
+  autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
+augroup END
 " }}} Auto commands
 
 " Bindings {{{
@@ -245,8 +299,28 @@ nno <leader>sr :ReloadMySnippets<cr>
 nno <leader>se :EditMySnippets<cr>
 " open nerd tree
 nno <leader>o :NERDTreeToggle<cr>
-" cycle windows
+" cycle & switch window
 nno <tab> <c-w>
 nno <tab><tab> <c-w><c-w>
+" reformat whole buffer
+nno <leader>f gg=G
+" run whole test file
+nmap <leader>M <Plug>SendTestToTmux
+" run test under cursor
+nmap <leader>m <Plug>SendFocusedTestToTmux
+" edit vimrc
+nno <leader>rc :Rc<cr>
+" reload vimrc
+nno <leader>rl :Rl<cr>
+" show cheat sheet
+nno <leader>c :Cheat<cr>
+" indent right & left single line
+nno > >>
+nno < <<
+nmap < <<
+nmap > >>
+" indent right/left selection with repeat selecting
+vmap < <gv
+vmap > >gv
 " }}} Bindings
 
