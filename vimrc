@@ -45,6 +45,8 @@ call vundle#rc()
 " Bundles definitions {{{
 " plugins manager
 Bundle 'gmarik/vundle'
+" my favorite and customized color scheme
+Bundle 'andrzejsliwa/vim-hemisu'
 " library of usefull functions and and viml development helpers
 Bundle 'vim-scripts/L9'
 " nice status line
