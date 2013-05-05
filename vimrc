@@ -3,6 +3,7 @@ let vim_server_path=expand("~/.andrzej-vim")
 let vim_path=expand("~/.vim")
 if isdirectory(vim_server_path)
   let $CONFIG_ROOT=vim_server_path
+  let $MYVIMRC=vim_server_path . "/vimrc"
 else
   let $CONFIG_ROOT=vim_path
 endif

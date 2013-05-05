@@ -1,0 +1,33 @@
+snippet mod
+	-module(`Filename()`).
+
+snippet exp
+	-export([${1:functions}]).${2}
+snippet expa
+	-compile(export_all).${1}
+
+snippet fu
+	${1:function}(${2:args})${3:guard}->
+		${4:body}
+snippet fui
+	${1:function}(${2:args})${3:guard}-> ${4:body}
+snippet fn
+	fun(${1:args}) -> ${2:body} end
+snippet fut
+	${1:function}_test() ->
+		?assert(${2:condition})${3}
+
+snippet iof
+	io:format("${1:string}~n")${3}
+snippet iofp
+	io:format("${1:string}~n", [${2:params}])${3}
+
+snippet eunit
+	-ifdef(TEST).
+	-include_lib("eunit/include/eunit.hrl").
+
+	${1:name}_test() ->
+	 	?assert(${2:condition})${3}
+	-endif.
+
+
