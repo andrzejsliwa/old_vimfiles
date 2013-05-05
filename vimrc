@@ -1,5 +1,5 @@
 " Must have {{{
-let vim_server_path=expand("~/.andrzej-vim")
+let vim_server_path=expand("~/.vim-andrzej")
 let vim_path=expand("~/.vim")
 if isdirectory(vim_server_path)
   let $CONFIG_ROOT=vim_server_path
