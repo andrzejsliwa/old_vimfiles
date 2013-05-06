@@ -52,8 +52,6 @@ Bundle 'andrzejsliwa/vim-hemisu'
 Bundle 'vim-scripts/L9'
 " nice status line
 Bundle 'Lokaltog/vim-powerline'
-" fuzzy finder for files and buffers
-Bundle 'kien/ctrlp.vim'
 " search via ack
 Bundle 'mileszs/ack.vim'
 " easy commenting
@@ -72,6 +70,8 @@ Bundle 'scrooloose/nerdtree'
 Bundle 'benmills/vimux'
 " running tests via vimux and tmux
 Bundle 'jgdavey/vim-turbux'
+" fuzzy finder for files and buffers
+Bundle 'kien/ctrlp.vim'
 " native clipboard
 Bundle 'troydm/pb.vim'
 " git integration
@@ -103,7 +103,7 @@ colorscheme hemisu       " choose my favorite vim color scheme
 " General {{{
 " speedup
 set ttyfast
-set synmaxcol=800
+set synmaxcol=200
 " title
 set title
 set titlestring=%f%(\ [%M]%)
@@ -177,7 +177,12 @@ let g:ctrlp_reuse_window = 1
 let g:Powerline_symbols = 'fancy'
 " }}} Power line
 
-" snipmate {{{
+" Turbux {{{
+let g:turbux_command_prefix = 'zeus'
+let g:no_turbux_mappings = 1
+" }}}
+
+" Snipmate {{{
 let snippets_dir = $CONFIG_ROOT . "/snippets"
 " }}}
 
@@ -240,9 +245,9 @@ function! EditMySnippets()
 endfunction
 
 function! ReloadMySnippets()
-  execute "silent :w"
-  execute "silent :bd"
-  execute "silent :call ReloadAllSnippets()"
+  execute "w"
+  execute "bd"
+  execute "call ReloadAllSnippets()"
 endfunction
 " }}} Edit snippet
 
@@ -260,18 +265,19 @@ command! -bar -nargs=* LineNumberToggle call LineNumberToggle()
 " Auto commands {{{
 autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 augroup FileTypes
-  autocmd!
-  autocmd FileType snippet setlocal shiftwidth=4 tabstop=4
-  autocmd FileType erlang  setlocal shiftwidth=4 tabstop=4
-  autocmd FileType make    setlocal noexpandtab shiftwidth=4 tabstop=4
-  autocmd FileType snippet setlocal expandtab shiftwidth=4 tabstop=4
-  autocmd BufNewFile,BufRead *.app.src set filetype=erlang
-  autocmd BufNewFile,BufRead *.config  set filetype=erlang
+  au!
+  au FileType snippet setlocal shiftwidth=4 tabstop=4
+  au FileType erlang  setlocal shiftwidth=4 tabstop=4
+  au FileType make    setlocal noexpandtab shiftwidth=4 tabstop=4
+  au FileType snippet setlocal expandtab shiftwidth=4 tabstop=4
+  au BufNewFile,BufRead *.app.src set filetype=erlang
+  au BufNewFile,BufRead *.config  set filetype=erlang
 augroup END
 
 augroup Other
-  autocmd!
-  autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
+  au!
+  au BufWritePre * :call <SID>StripTrailingWhitespaces()
+  au BufWinEnter * let w:m2=matchadd('ToLong', '\%>80v.\+', -1)
 augroup END
 " }}} Auto commands
 
@@ -317,8 +323,7 @@ nno <leader>se :EditMySnippets<cr>
 " open nerd tree
 nno <leader>o :NERDTreeToggle<cr>
 " cycle & switch window
-nno <tab> <c-w>
-nno <tab><tab> <c-w><c-w>
+nno <tab> <c-w><c-w>
 " reformat whole buffer
 nno <leader>f gg=G
 " run whole test file
