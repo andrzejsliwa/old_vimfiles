@@ -162,6 +162,10 @@ set nofoldenable
 
 " Plugins configs {{{
 
+" NERDTree {{{
+let NERDTreeQuitOnOpen = 1
+" }}} NERDTree
+
 " Ack {{{
 " you need to install https://github.com/ggreer/the_silver_searcher
 let g:ackprg = 'ag --nogroup --nocolor --column'
@@ -172,6 +176,10 @@ let g:ctrlp_cmd = 'CtrlPBuffer'
 let g:ctrlp_cache_dir = $CONFIG_ROOT . '/tmp/.cache/ctrlp'
 let g:ctrlp_reuse_window = 1
 " }}} CtrlP
+
+" Vimerl {{{
+let g:erlang_highlight_bif = 1
+" }}} Vimerl
 
 " Power line {{{
 let g:Powerline_symbols = 'fancy'
