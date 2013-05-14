@@ -12,11 +12,6 @@ endif
 command! -bar -nargs=* Rc e $MYVIMRC       " edit ~/.vimrc   (this file)
 command! -bar -nargs=* Rl :source $MYVIMRC " reload ~/.vimrc (this file)
 set backspace=indent,eol,start             " enable intuitive backspacing
-" replace ; with : in normal and visual mode
-nno ; :
-nno : ;
-vno ; :
-vno : ;
 " }}} Must have
 
 " Prepare for loading plugins {{{
@@ -65,7 +60,7 @@ Bundle 'terryma/vim-multiple-cursors'
 " undo tree
 Bundle 'sjl/gundo.vim'
 " project drawer
-Bundle 'scrooloose/nerdtree'
+"Bundle 'scrooloose/nerdtree'
 " tmux integration
 Bundle 'benmills/vimux'
 " running tests via vimux and tmux
@@ -80,6 +75,55 @@ Bundle 'tpope/vim-fugitive'
 Bundle 'mbbx6spp/vim-rebar'
 " erlang integration - customised indentation
 Bundle 'andrzejsliwa/vimerl'
+"
+"Bundle 'vim-scripts/sudo.vim'
+"
+"Bundle 'vim-scripts/ZoomWin'
+"
+"Bundle 'vim-scripts/YankRing.vim'
+"
+"Bundle 'vim-scripts/Vim-R-plugin'
+"
+"Bundle 'vim-scripts/Specky'
+"
+"Bundle 'vim-scripts/SearchComplete'
+"
+"Bundle 'vim-scripts/IndexedSearch'
+"
+"Bundle 'vim-scripts/AutoTag'
+"
+"Bundle 'vim-ruby/vim-ruby'
+"
+"Bundle 'tpope/vim-unimpaired'
+"
+"Bundle 'tpope/vim-surround'
+"
+"Bundle 'tpope/vim-repeat'
+"
+"Bundle 'tpope/vim-rake'
+"
+"Bundle 'tpope/vim-rails'
+"
+"Bundle 'tpope/vim-haml'
+"
+"Bundle 'tpope/vim-git'
+"
+"Bundle 'tpope/vim-fugitive'
+"
+"Bundle 'tpope/vim-endwise'
+"
+"Bundle 'tpope/vim-bundler'
+"
+"Bundle 'tomtom/tcomment_vim'
+"
+"Bundle 'tjennings/git-grep-vim'
+"
+"Bundle 'skwp/vim-ruby-conque'
+"
+"Bundle 'skwp/vim-easymotion'
+"
+"Bundle 'skwp/vim-conque'
+"
 " }}} Bundles definitions
 
 " Triger install when firstime {{{
@@ -172,9 +216,8 @@ let g:ackprg = 'ag --nogroup --nocolor --column'
 " }}} Ack
 
 " CtrlP {{{
-let g:ctrlp_cmd = 'CtrlPBuffer'
 let g:ctrlp_cache_dir = $CONFIG_ROOT . '/tmp/.cache/ctrlp'
-let g:ctrlp_reuse_window = 1
+"let g:ctrlp_reuse_window = 0
 " }}} CtrlP
 
 " Vimerl {{{
@@ -182,7 +225,7 @@ let g:erlang_highlight_bif = 1
 " }}} Vimerl
 
 " Power line {{{
-let g:Powerline_symbols = 'fancy'
+let g:Powerline_symbols = 'compatible'
 " }}} Power line
 
 " Turbux {{{
@@ -231,6 +274,16 @@ function! LineNumberToggle()
 endfunc
 " }}} Line number toggle
 
+" IndentErlangWithEmacs() {{{
+let s:emacs_indenter = expand('~/.vim/emacs_indent.sh')
+function! IndentErlangWithEmacs()
+  execute 'silent :w'
+  execute 'silent !' . s:emacs_indenter . ' ' . expand('%:p')
+  execute 'silent :e'
+  redraw!
+endfunction
+" }}}
+
 " Todos {{{
 function! s:OpenTodo(toFull)
   if (a:toFull == 1)
@@ -268,6 +321,7 @@ command! -bar -nargs=* Cheat call CheatSheet()
 command! -bar -nargs=* EditMySnippets call EditMySnippets()
 command! -bar -nargs=* ReloadMySnippets call ReloadMySnippets()
 command! -bar -nargs=* LineNumberToggle call LineNumberToggle()
+command! IndentErl call IndentErlangWithEmacs()
 " }}} Commands defs
 
 " Auto commands {{{
@@ -289,9 +343,22 @@ augroup Other
 augroup END
 " }}} Auto commands
 
+" Handle mouse {{{
+if has('mouse')
+  set mouse=a
+  if &term =~ "xterm" || &term =~ "screen"
+    autocmd VimEnter *    set ttymouse=xterm2
+    autocmd FocusGained * set ttymouse=xterm2
+    autocmd BufEnter *    set ttymouse=xterm2
+  endif
+endif
+" }}}
+
 " Bindings {{{
 " enable paste
 nno <leader>q :set paste<cr>
+" switch to previous buffer
+no <leader><leader> <c-^>
 " diable paste
 nno <leader>Q :set nopaste<cr>
 " switch relative/normal nuqmbering
@@ -322,6 +389,8 @@ nno <leader>X :bd<CR>
 vno <leader>y :Pbyank<cr>
 " paste from system clipboard
 nno <leader>p :Pbpaste<cr>
+" open current folding and close others
+nno <leader><Space> zR
 " reset search
 nno <silent> <Leader>/ :nohlsearch<cr>
 " reload snippets for current filetype
@@ -330,10 +399,14 @@ nno <leader>sr :ReloadMySnippets<cr>
 nno <leader>se :EditMySnippets<cr>
 " open nerd tree
 nno <leader>o :NERDTreeToggle<cr>
+" open nerd tree
+nno <leader>e :Explore<cr>
 " cycle & switch window
 nno <tab> <c-w><c-w>
 " reformat whole buffer
 nno <leader>f gg=G
+" reformat erlang emacs style
+nno <leader>fe :IndentErl<cr>
 " run whole test file
 nmap <leader>M <Plug>SendTestToTmux
 " run test under cursor
@@ -342,8 +415,10 @@ nmap <leader>m <Plug>SendFocusedTestToTmux
 nno <leader>rc :Rc<cr>
 " reload vimrc
 nno <leader>rl :Rl<cr>
-" show cheat sheet
-nno <leader>c :Cheat<cr>
+" run custom vimux command
+nno <leader>c :VimuxPromptCommand<cr>
+" run last vimux command
+nno <leader>l :w<cr>:VimuxRunLastCommand<cr>
 " move left
 nno < <<
 nmap < <<
