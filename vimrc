@@ -94,11 +94,6 @@
         nnoremap <silent> [unite]h :<C-u>Unite -buffer-name=help help<CR>
         nnoremap <silent> [unite]H :<C-u>UniteWithCursorWord -buffer-name=help help<CR>
     " }}} Unite help
-    NeoBundle 'Shougo/unite-session' " Unite session {{{
-        let g:unite_source_session_enable_auto_save = 1
-        nnoremap <silent> [unite]s :<C-u>Unite -buffer-name=sessions session<cr> 
-        autocmd VimLeave * nested UniteSessionSave
-    " }}} Unite session
     NeoBundle 'thinca/vim-unite-history' " Unite history {{{
         let g:unite_source_history_yank_enable=1
         nnoremap <silent> [unite]y :<C-u>Unite -buffer-name=yank history/yank<cr>
@@ -121,6 +116,7 @@
     " }}}
     NeoBundle 'terryma/vim-multiple-cursors'
     NeoBundle 'troydm/pb.vim'
+    NeoBundle 'elixir-lang/vim-elixir'
     NeoBundle 'andrzejsliwa/vimerl' " VimErl {{{
         let g:erlang_highlight_bif = 1
     " }}}
