@@ -85,9 +85,9 @@
         nnoremap <silent> [unite]p :<C-u>Unite -buffer-name=processes process<cr>
         nnoremap <silent> [unite]n :<C-u>Unite file file/new<cr>
         nnoremap <silent> [unite]/ :<C-u>Unite -buffer-name=search grep:.<cr>
-        nnoremap <silent> [unite]? :<C-u>execute 'Unite -buffer-name=search grep:.::' . expand("<cword>")
+        nnoremap <silent> [unite]? :<C-u>execute 'Unite -buffer-name=search grep:.::' . expand("<cword>")<cr>
     " }}} Unite
-    NeoBundle 'Shougo/unite-outline' " Unite outline {{{ 
+    NeoBundle 'Shougo/unite-outline' " Unite outline {{{
         nnoremap <silent> [unite]o :<C-u>Unite -buffer-name=outline outline<cr>
     " }}} Unite outline
     NeoBundle 'Shougo/unite-help' " Unite help {{{
@@ -100,16 +100,33 @@
     " }}}
     NeoBundle 'Shougo/vimfiler' " {{{
         let g:vimfiler_as_default_explorer = 1
+        let g:vimfiler_safe_mode_by_default = 0
+        let g:vimfiler_ignore_pattern = ''
         nnoremap <silent> [unite]e :<C-u>VimFiler<cr>
     " }}}
-    NeoBundle 'Shougo/vimshell.vim'
-    NeoBundle 'Shougo/neocomplete' " {{{
-        " let g:neocomplete#enable_at_startup = 1
-    " }}}
-    NeoBundle 'Shougo/neosnippet'
 
+    NeoBundle 'wikitopian/hardmode'
+    NeoBundle 'benmills/vimux'
+    NeoBundle 'Shougo/vimshell.vim'
+    NeoBundle 'Shougo/neocomplete'
+    NeoBundle 'Shougo/neosnippet' " NeoSnippet {{{
+        imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+            \ "\<Plug>(neosnippet_expand_or_jump)"
+            \: pumvisible() ? "\<C-n>" : "\<TAB>"
+        smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+            \ "\<Plug>(neosnippet_expand_or_jump)"
+            \: "\<TAB>"
+        if has('conceal')
+            set conceallevel=2 concealcursor=i
+        endif
+    " }}}
+    " NeoBundle 'msanders/snipmate.vim'
+    NeoBundle 'mattonrails/vim-mix'
+    " NeoBundle 'andrzejsliwa/vim-rebar'
+    NeoBundle 'andrzejsliwa/vimux-rebar'
     NeoBundle 'mileszs/ack.vim'
     NeoBundle 'andrzejsliwa/vim-hemisu'
+    NeoBundle 'croaker/mustang-vim'
     NeoBundle 'tpope/vim-fugitive'
     NeoBundle 'Lokaltog/vim-powerline' " Powerline {{{
         let g:Powerline_symbols = 'compatible'
@@ -117,10 +134,18 @@
     NeoBundle 'terryma/vim-multiple-cursors'
     NeoBundle 'troydm/pb.vim'
     NeoBundle 'elixir-lang/vim-elixir'
-    NeoBundle 'andrzejsliwa/vimerl' " VimErl {{{
-        let g:erlang_highlight_bif = 1
+    "NeoBundle 'andrzejsliwa/vimerl' " VimErl {{{
+    "    let g:erlang_highlight_bif = 1
     " }}}
-    NeoBundle 'vim-scripts/ZoomWin'
+    "NeoBundle 'aerosol/vim-erlang-tags'
+    NeoBundle 'hcs42/vim-erlang-runtime.git'
+    NeoBundle 'hcs42/vim-erlang-tags.git'
+    NeoBundle 'vim-scripts/ZoomWin' " ZoomWin {{{
+        map <leader>z <Plug>ZoomWin
+    " }}}
+    NeoBundle 'vim-scripts/kickAssembler-syntax'
+    NeoBundle 'derekwyatt/vim-scala'
+    NeoBundle 'jnwhiteh/vim-golang'
 
     if g:first_time
         NeoBundleInstall
@@ -134,6 +159,12 @@
 " }}} Renable syntax highlighting and file types detection
 
 " Look & feel {{{
+set guifont=Inconsolata:h20
+" Disable the scrollbars (NERDTree)
+set guioptions-=r
+set guioptions-=L
+" " Disable the macvim toolbar
+set guioptions-=T
     set term=screen-256color " configure 256 colors
     set t_Co=256             " same...
     set background=dark      " choose dark version of background
@@ -222,8 +253,10 @@
     " Line number toggle {{{
         function! LineNumberToggle()
             if(&relativenumber == 1)
+                set norelativenumber
                 set number
             else
+                set nonumber
                 set relativenumber
             endif
         endfunc
@@ -270,18 +303,21 @@
 " Auto commands {{{
     "autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
     augroup FileTypes
-        "au!
-        "au FileType snippet setlocal shiftwidth=4 tabstop=4
-        "au FileType erlang  setlocal shiftwidth=4 tabstop=4
-        "au FileType make    setlocal noexpandtab shiftwidth=4 tabstop=4
-        "au FileType snippet setlocal expandtab shiftwidth=4 tabstop=4
-        "au BufNewFile,BufRead *.app.src set filetype=erlang
-        "au BufNewFile,BufRead *.config  set filetype=erlang
+        au!
+        au FileType ruby    setlocal shiftwidth=2 tabstop=2
+        au FileType snippet setlocal shiftwidth=4 tabstop=4
+        au FileType erlang  setlocal shiftwidth=4 tabstop=4
+        au FileType make    setlocal noexpandtab shiftwidth=4 tabstop=4
+        au FileType snippet setlocal expandtab shiftwidth=4 tabstop=4
+        au BufNewFile,BufRead *.app.src set filetype=erlang
+        au BufNewFile,BufRead *.config  set filetype=erlang
+        au BufNewFile,BufRead *.asm set filetype=kickass
+        au BufNewFile,BufRead *.s set filetype=kickass
     augroup END
 
     augroup Fugitive
         au!
-        " Cleanup fugitive buffers
+        " Cleanup fugitive buffer
         au BufReadPost fugitive://* set bufhidden=delete
         au BufReadPost fugitive://*
             \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
@@ -291,8 +327,8 @@
 
     augroup Other
         au!
-        "au BufWritePre * :call <SID>StripTrailingWhitespaces()
-        "au BufWinEnter * let w:m2=matchadd('ToLong', '\%>80v.\+', -1)
+        au BufWritePre * :call <SID>StripTrailingWhitespaces()
+        " au BufWinEnter * let w:m2=matchadd('ToLong', '\%>80v.\+', -1)
     augroup END
 " }}} Auto commands
 
@@ -318,6 +354,11 @@
 " }}}
 
 " Bindings {{{
+    let mapleader = "df"
+    inoremap jk <esc>
+    inoremap <esc> <nop>
+    nno ; :
+
     " switch to previous buffer
     nno <leader><leader> <c-^>
     " switch relative/normal nuqmbering
@@ -327,19 +368,25 @@
     " split horizontal
     nno <leader>s <C-W>s
     " close current pane
-    nno <leader>x <C-W>c
+    nno <leader>X <C-W>c
     " close buffer
-    nno <leader>X :bd<CR>
+    nno <leader>x :bd<CR>
     " copy to system clipboard
     vno <leader>y :Pbyank<cr>
     " paste from system clipboard
     nno <leader>p :Pbpaste<cr>
     " reset search
-    nno <silent> <Leader>/ :nohlsearch<cr>
+    nnoremap <CR> :nohlsearch<CR><CR>
     " reload snippets for current filetype
     nno <leader>sr :ReloadMySnippets<cr>
     " edit snippets for current filetype
     nno <leader>se :EditMySnippets<cr>
+    " vimux & rebar
+    map <leader>tc :RebarEunitCurrentSuite<cr>
+    map <leader>ta :RebarEunitAll<cr>
+    map <leader>td :RebarDeps<cr>
+    map <leader>tp :VimuxPromptCommand<cr>
+    map <leader>t  :VimuxRunLastCommand<cr>
     " cycle & switch window
     nno <tab> <c-w><c-w>
     " reformat whole buffer
@@ -351,7 +398,9 @@
     " reload vimrc
     nno <leader>rl :Rl<cr>
     " save shortuct
-    nno <silent> <leader>w :w<cr>
+    nno <leader>w :w<cr>
+    " quit
+    nno <leader>q :q<cr>
     " Fugitive
     nno <leader>gd :Gdiff<cr>
     nno <leader>gs :Gstatus<CR><C-W>15+
